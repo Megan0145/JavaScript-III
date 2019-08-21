@@ -15,15 +15,44 @@
 // Principle 1
 
 // code example for Window Binding
+// Eg top-level primitive data
+var myAge = 21;
+// console.log(window.myAge);
 
 // Principle 2
 
 // code example for Implicit Binding
 
+var meg = {
+    name: 'Megan Ennis',
+    activity: 'dance',
+    doSomething: function() {
+        return `My name is ${this.name} annd I am ${this.activity}ing!`;
+    },
+}
+//console.log(meg.doSomething());
+
 // Principle 3
 
 // code example for New Binding
+function Student(name, age, course){
+    this.name = name;
+    this.age = age;
+    this.course = course;
+}
+
+// Two new students are created below using the new keyword, 'this' in the constructor function refers to each particular instance
+let student1 = new Student('Zoe', 33, 'Full Stack Web Dev');
+let student2 = new Student('Noah', 27, 'Data Science');
+
 
 // Principle 4
 
 // code example for Explicit Binding
+
+function dog(name, breed){
+    return `${name} is a ${breed}`;
+}
+
+dog.call('dog1', 'Doug', 'Labrador');
+dog.apply('puppies', ['Doug', 'Labrador']);
