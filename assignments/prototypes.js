@@ -45,7 +45,28 @@
   - When eating an edible, it should be pushed into a "stomach" property which is an array.
   - Give persons the ability to poop.
   - When pooping, the stomach should empty.
+*/
+  function Person(name, age ) {
+    this.name = name;
+    this.age = age;
+    this.stomach = [];
+  }
 
+  Person.prototype.greet = function() {
+    return `Hi my name is ${this.name} and my age is ${this.age}`;
+  }
+
+  Person.prototype.eat = function(edible) {
+    if (edible) {
+      this.stomach.push(edible);
+    }
+  }
+  Person.prototype.poop = function() {
+    if (this.stomach.length > 0) this.stomach = [];
+  }
+
+  var Meg = new Person('Megan', 21);
+/*
   TASK 2
 
   - Build a Car constructor that takes model name and make.
@@ -56,13 +77,48 @@
   - Give cars the ability to be repaired.
   - A repaired car can be driven again.
 
+  */
+function Car(model, name, make) {
+  this.model= model;
+  this.name= name;
+  this.make = make;
+  this.odometer = 0;
+  this.canDrive = true;
+}
+Car.prototype.drive = function(distance) {
+  if (this.canDrive === false) {
+    return `I crashed at ${this.odometer} miles!`;
+  }
+  this.odometer += distance;
+}
+Car.prototype.crash = function() {
+  this.canDrive = false;
+}
+Car.prototype.repair = function() {
+  this.canDrive = true;
+}
+
+var newCar = new Car ('Toyota', 'Yarris', 'Blablabla');
+/*
   TASK 3
 
   - Build a Baby constructor that subclasses the Person built earlier.
   - Babies of course inherit the ability to greet, which can be strange.
   - Babies should have the ability to play, which persons don't.
   - By playing, a string is returned with some text of your choosing.
+*/
+  function Baby(name, age) {
+    Person.call(this, name, age);
+  } 
 
+  Baby.prototype = Object.create(Person.prototype);
+
+  Baby.prototype.playing = function() {
+    return `I am playing with my train`;
+  }
+
+    var newBaby = new Baby('Joe', 1);
+/*
   TASK 4
 
   Use your imagination and come up with constructors that allow to build objects
