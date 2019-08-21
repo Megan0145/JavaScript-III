@@ -127,6 +127,47 @@ var newCar = new Car ('Toyota', 'Yarris', 'Blablabla');
 
 */
 
+function Library(name, area, postCode) {
+  this.name = name;
+  this.area = area;
+  this.postCode = postCode;
+  this.books = [];
+}
+Library.prototype.addBook = function(book) {
+  this.books.push(book);
+}
+
+Library.prototype.checkoutBook = function(book) {
+  // var bookFound = this.books.filter(book => book.ISBN === bookISBN);
+    var isFound = this.books.includes(book);
+    if(isFound) {
+      book.isCheckedOut = true; 
+      var bookIndex = this.books.indexOf(book);
+      this.books.splice(bookIndex,1);
+      return 'You have checked out ' + book.name;
+    } else {
+      return "This book isnt available right now";
+    }
+  }
+  
+function Book(name, area, postCode, author, ISBN) {
+  Library.call(this, name, area, postCode);
+  this.name = name;
+  this.author = author;
+  this.ISBN = ISBN; 
+  this.isCheckedOut = false;
+}
+
+Book.prototype = Object.create(Library.prototype);
+  
+//TEST
+var myLibrary = new Library('Fingal Library', 'Malahide', 'K36 PK20');
+var book1 = new Book('Eloquent JavaScript', 'Fingal Library', 'K36PK40', 'Marijn Haverbeke', '1045435M');
+var book2 = new Book('Book2', 'New Library', 'K36PK41', 'Megan Ennis', '10465655M');
+myLibrary.addBook(book1);
+myLibrary.addBook(book2);
+myLibrary.checkoutBook('10465655M');
+
 /*
 
   STRETCH TASK
