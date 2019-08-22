@@ -45,7 +45,28 @@
   - When eating an edible, it should be pushed into a "stomach" property which is an array.
   - Give persons the ability to poop.
   - When pooping, the stomach should empty.
+*/
+  function Person(name, age ) {
+    this.name = name;
+    this.age = age;
+    this.stomach = [];
+  }
 
+  Person.prototype.greet = function() {
+    return `Hi my name is ${this.name} and my age is ${this.age}`;
+  }
+
+  Person.prototype.eat = function(edible) {
+    if (edible) {
+      this.stomach.push(edible);
+    }
+  }
+  Person.prototype.poop = function() {
+    if (this.stomach.length > 0) this.stomach = [];
+  }
+
+  var Meg = new Person('Megan', 21);
+/*
   TASK 2
 
   - Build a Car constructor that takes model name and make.
@@ -56,13 +77,48 @@
   - Give cars the ability to be repaired.
   - A repaired car can be driven again.
 
+  */
+function Car(model, name, make) {
+  this.model= model;
+  this.name= name;
+  this.make = make;
+  this.odometer = 0;
+  this.canDrive = true;
+}
+Car.prototype.drive = function(distance) {
+  if (this.canDrive === false) {
+    return `I crashed at ${this.odometer} miles!`;
+  }
+  this.odometer += distance;
+}
+Car.prototype.crash = function() {
+  this.canDrive = false;
+}
+Car.prototype.repair = function() {
+  this.canDrive = true;
+}
+
+var newCar = new Car ('Toyota', 'Yarris', 'Blablabla');
+/*
   TASK 3
 
   - Build a Baby constructor that subclasses the Person built earlier.
   - Babies of course inherit the ability to greet, which can be strange.
   - Babies should have the ability to play, which persons don't.
   - By playing, a string is returned with some text of your choosing.
+*/
+  function Baby(name, age) {
+    Person.call(this, name, age);
+  } 
 
+  Baby.prototype = Object.create(Person.prototype);
+
+  Baby.prototype.playing = function() {
+    return `I am playing with my train`;
+  }
+
+    var newBaby = new Baby('Joe', 1);
+/*
   TASK 4
 
   Use your imagination and come up with constructors that allow to build objects
@@ -70,6 +126,47 @@
   complicated one with lots of state. Surprise us!
 
 */
+
+function Library(name, area, postCode) {
+  this.name = name;
+  this.area = area;
+  this.postCode = postCode;
+  this.books = [];
+}
+Library.prototype.addBook = function(book) {
+  this.books.push(book);
+}
+
+Library.prototype.checkoutBook = function(book) {
+  // var bookFound = this.books.filter(book => book.ISBN === bookISBN);
+    var isFound = this.books.includes(book);
+    if(isFound) {
+      book.isCheckedOut = true; 
+      var bookIndex = this.books.indexOf(book);
+      this.books.splice(bookIndex,1);
+      return 'You have checked out ' + book.name;
+    } else {
+      return "This book isnt available right now";
+    }
+  }
+  
+function Book(name, area, postCode, author, ISBN) {
+  Library.call(this, name, area, postCode);
+  this.name = name;
+  this.author = author;
+  this.ISBN = ISBN; 
+  this.isCheckedOut = false;
+}
+
+Book.prototype = Object.create(Library.prototype);
+  
+//TEST
+var myLibrary = new Library('Fingal Library', 'Malahide', 'K36 PK20');
+var book1 = new Book('Eloquent JavaScript', 'Fingal Library', 'K36PK40', 'Marijn Haverbeke', '1045435M');
+var book2 = new Book('Book2', 'New Library', 'K36PK41', 'Megan Ennis', '10465655M');
+myLibrary.addBook(book1);
+myLibrary.addBook(book2);
+myLibrary.checkoutBook('10465655M');
 
 /*
 
@@ -89,6 +186,15 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
+function GameObject(createdAt, name, dimensions) {
+  this.createdAt = createdAt;
+  this.name = name;
+  this.dimensions = dimensions;
+};
+
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game.`;
+};
 
 /*
   === CharacterStats ===
@@ -96,6 +202,17 @@
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+
+function CharacterStats(createdAt, name, dimensions, healthPoints) {
+  GameObject.call(this, createdAt, name, dimensions);
+  this.healthPoints = healthPoints;
+}
+
+CharacterStats.prototype.takeDamage = function(){
+  return `${this.name} took damage`;
+}
+
+CharacterStats.prototype = Object.create(GameObject.prototype);
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -107,6 +224,19 @@
   * should inherit takeDamage() from CharacterStats
 */
 
+function Humanoid(createdAt, name, dimensions, healthPoints, team, weapons, language){
+  CharacterStats.call(this, createdAt, name, dimensions, healthPoints);
+  this.team = team;
+  this.weapons = weapons;
+  this.language = language;
+}
+
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}`;
+}
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -115,7 +245,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -163,14 +293,14 @@
     ],
     language: 'Elvish',
   });
-  console.log(mage.createdAt); // Today's date
-  console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
-  console.log(swordsman.healthPoints); // 15
-  console.log(mage.name); // Bruce
-  console.log(swordsman.team); // The Round Table
-  console.log(mage.weapons); // Staff of Shamalama
-  console.log(archer.language); // Elvish
-  console.log(archer.greet()); // Lilith offers a greeting in Elvish.
-  console.log(mage.takeDamage()); // Bruce took damage.
-  console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+  // console.log(mage.createdAt); // Today's date
+  // console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
+  // console.log(swordsman.healthPoints); // 15
+  // console.log(mage.name); // Bruce
+  // console.log(swordsman.team); // The Round Table
+  // console.log(mage.weapons); // Staff of Shamalama
+  // console.log(archer.language); // Elvish
+  // console.log(archer.greet()); // Lilith offers a greeting in Elvish.
+  // console.log(mage.takeDamage()); // Bruce took damage.
+  // console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
+
